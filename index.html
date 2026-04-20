@@ -892,6 +892,10 @@
     gap: 12px;                  /* 섹션 간 gap 12 */
   }
   .screen-home.is-active { display: flex; }
+  .screen-wallet { display: none; }
+  .screen-wallet.is-active { display: block; }
+  .wallet-screenshot { width: 100%; }
+  .wallet-screenshot img { width: 100%; display: block; }
 
   /* --- 1) Pay strip (Figma Pay_Component 3982:180344) ---
      EXACT Figma spec:
@@ -1442,6 +1446,16 @@
 
 
       <!-- ===================================================================
+           SCREEN: WALLET (지갑 칩 선택 시)
+           =================================================================== -->
+      <section class="screen screen-wallet" data-screen="wallet">
+        <div class="wallet-screenshot">
+          <img src="images/wallet_dummy_img.png" alt="지갑 화면" />
+        </div>
+      </section>
+      <!-- /screen-wallet -->
+
+      <!-- ===================================================================
            SCREEN: HOME (홈 칩 선택 시) — Figma 3982:180303 기반
            =================================================================== -->
       <section class="screen screen-home is-active" data-screen="home" id="homeScreen">
@@ -1877,7 +1891,7 @@
       if (!chips.length) return;
 
       // 칩 텍스트 → data-screen 매핑 (구현된 화면만)
-      var SCREEN_BY_LABEL = { '홈': 'home' };
+      var SCREEN_BY_LABEL = { '홈': 'home', '지갑': 'wallet' };
 
       chips.forEach(function (chip) {
         var label = (chip.textContent || '').trim();
@@ -1937,11 +1951,11 @@
           // 스크롤 위치가 있으면 최상단으로 이동
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-          // 이미 최상단이면 홈↔발견 토글
+          // 이미 최상단이면 홈↔지갑 토글
           var mt = window.MoreTab;
           if (!mt) return;
           var current = mt.getActiveScreen();
-          var next = current === 'home' ? 'feed' : 'home';
+          var next = current === 'home' ? 'wallet' : 'home';
           mt.activate(next);
         }
       });
