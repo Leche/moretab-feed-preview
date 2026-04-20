@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=393, initial-scale=1.0" />
+<title>더보기탭 - 발견 피드</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  :root {
+    --gray900: #191919;
+    --gray800: #333333;
+    --gray700: #595959;
+    --gray600: #595959;
+    --gray500: #767676;
+    --gray400: #999999;
+    --gray300: #b3b3b3;
+    --gray200: #d9d9d9;
+    --gray150: #e6e6e6;
+    --gray100: #f2f2f2;
+    --gray075: #f5f5f5;
+    --gray050: #f7f7f7;
+    --white: #ffffff;
+    --red500: #f4551e;
+    --point-red: #f04452;
+    --point-blue: #2f7ff5;
+    --chat-yellow: #fae100;
+    --line: rgba(0, 0, 0, 0.14);
+    --card-border: rgba(0, 0, 0, 0.04);
+    --img-border: rgba(0, 0, 0, 0.03);
+    --dim-border: rgba(255, 255, 255, 0.16);
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: #dcdde1;
+    color: var(--gray900);
+    display: flex;
+    justify-content: center;
+  }
+
+  .device {
+    width: 393px;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* BG (Gradation)_최종버전 — 1321:3703
+     Base: #f5f5f5  |  Top 54px: white→#f5f5f5  |  Bottom 222px: #f5f5f5→white
+     Auto stretches between header (157px) and tab bar (83px) */
+  .bg-gradient {
+    position: absolute;
+    top: 157px; left: 0; right: 0;
+    bottom: 83px;
+    background: #f5f5f5;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-gradient::before {
+    /* BG gradation 1 — top 54px: white → #f5f5f5 */
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 54px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 100%);
+  }
+  .bg-gradient::after {
+    /* BG gradation 3 — bottom 222px: #f5f5f5 → white */
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 222px;
+    background: linear-gradient(to bottom, #f5f5f5 0%, #ffffff 100%);
+  }
+
+  /* ===== TOP ===== */
+  .top {
+    position: relative;
+    z-index: 10;
+    background: #ffffff;
+  }
+  /* Status Bar — 393×53, iPhone 14 Pro (Dynamic Island 미지원)
+     Matches Figma node 1321:3709 */
+  .status-bar {
+    position: relative;
+    width: 100%;
+    height: 53px;
+    background: #ffffff;
+  }
+  .status-bar .time {
+    position: absolute;
+    top: 15px;
+    left: 33px;
+    height: 22px;
+    line-height: 22px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.408px;
+    color: #191919;
+  }
+  .status-bar .icons {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 12px;
+  }
+  .status-bar .icons svg { display: block; }
+
+  /* Main tab (Figma: 1321:3710) — px-16, h-56, justify-between */
+  .main-tab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    background: #ffffff;
+  }
+  /* Title Type wrapper (Figma: I1321:3713;30471:3282) — h-56, pr-12, py-8 */
+  .main-tab .logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    padding: 8px 12px 8px 0;
+    gap: 10px;
+  }
+  .main-tab .logo {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: normal;
+    color: #191919;
+    white-space: nowrap;
+  }
+  /* Trailing controls (Figma: 1321:3714) — gap-9, h-56, justify-end */
+  .main-tab .actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    height: 56px;
+  }
+  /* Icon Button (Figma: Trailing Button) — px-4 py-16, icon size 24 → click area 32x56 */
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 4px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+  }
+  .icon-btn img,
+  .icon-btn svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Top Chip - XLarge (Figma: 1321:3715) — chip set starts at left:16, top:0 */
+  .chip-bar {
+    height: 48px;
+    padding: 0 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    background: #ffffff;
+  }
+  /* A. Tab / 01. XLarge (Figma: 1321:3717) — h-38, px-16 py-10, gap-4, rounded-40 */
+  .chip {
+    height: 38px;
+    padding: 10px 16px;
+    border-radius: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: normal;
+    text-align: center;
+    background: #ffffff;
+    color: #191919;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    position: relative;
+    white-space: nowrap;
+  }
+  /* Chip text inner — min-w-14 per Figma token */
+  .chip > .chip-txt {
+    display: inline-block;
+    min-width: 14px;
+    text-align: center;
+  }
+  /* A. Tab / 01. XLarge — selected state (Figma: 1321:3720) — bg #191919, no border */
+  .chip.active {
+    background: #191919;
+    color: #ffffff;
+    border: 0;
+  }
+
+  /* ===== FEED ===== */
+  .feed {
+    position: relative;
+    z-index: 5;
+    /* Bottom gap between last item and tab-bar is controlled by the
+       last-child margin rule (e.g. card-news:last-child { margin-bottom: 20px }). */
+    padding: 6px 0 0;
+  }
+
+  /* ===== Share row (info+share) — Figma 1321:3799 =====
+     Container: flex items-start justify-between
+     info (left): pl-2px pt-6px — text/bar offset downward to align with btn center
+     share btn (right): 34×34, p-8px, rounded-28px, border rgba(0,0,0,0.08) */
+  .info-share {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .info-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-left: 2px;
+    padding-top: 6px;
+  }
+  .info-tag .bar {
+    display: inline-block;
+    width: 1.5px;
+    height: 13px;
+    background: #b2b2b2; /* GRAY400S */
+    border-radius: 40px;
+  }
+  .info-tag .txt {
+    font-size: 14px;
+    line-height: 17px;
+    color: #767676; /* GRAY550S */
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .share-btn {
+    width: 34px;
+    height: 34px;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 28px;
+    border: 1px solid rgba(0, 0, 0, 0.08); /* GRAY100A */
+    background: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  .share-btn img,
+  .share-btn svg { width: 18px; height: 18px; color: var(--gray700); display: block; }
+
+  /* ===== Card (white background cards) =====
+     node 1321:3723 등 — 361w, 16px radius, white bg, subtle border */
+  .card {
+    width: 361px;
+    margin: 0 auto 12px;
+    background: #ffffff;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 14px 16px 12px;
+    position: relative;
+  }
+
+  /* Title — 18px bold (semantic: h2) */
+  .card-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--gray900);
+    line-height: 1.4;
+    letter-spacing: -0.3px;
+    margin: 6px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title .tag-reserve {
+    /* Figma 1321:3986 — Tag/예약
+       bg #fee500, padding 4px, gap 1px, radius 5px
+       text Pretendard SemiBold 11px/1.15 black, icon 12×12 */
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    padding: 4px;
+    background: #fee500;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #000;
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+  .card-title .tag-reserve img,
+  .card-title .tag-reserve svg {
+    width: 12px;
+    height: 12px;
+    flex: none;
+  }
+  /* Figma 1321:3795 — 장소 info row
+     - items-start, gap 4px, font-size 16px, leading 1.52, color GRAY600S #595959
+     - letter-spacing 0, margin-top 4px
+     - .star: RED500S #f4551e, font-weight 500 (Medium), icon 12×12 gap 2px
+     - .dot-sep: "∙" character rendered at 15px in GRAY600S (between review count and address) */
+  .card-meta {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 16px;
+    line-height: 1.52;
+    color: var(--gray600);
+    letter-spacing: 0;
+  }
+  .card-meta .star {
+    color: var(--red500);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .card-meta .dot-sep {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 8px;
+    height: 24px;
+    color: var(--gray600);
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .card-meta .dot-sep::before {
+    content: '∙';
+  }
+
+  /* Figma 1321:3795 — card description, GRAY900S #191919 */
+  .card-desc {
+    font-size: 16px;
+    line-height: 1.52rem;
+    color: #191919;
+    letter-spacing: -0.3px;
+    /* card-title(h2) ↔ card-desc 간격: 4px */
+    margin-top: 4px;
+    /* card-desc ↔ thumb-row 간격: 14px */
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* 1321:3731 3-thumbnail frame
+     - flex gap 2px
+     - each cell: 111px height, 1px 3% black border
+     - left cell: 12px radius tl/bl, right cell: 12px radius tr/br, middle: 0
+     - images object-cover */
+  .thumb-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    height: 111px;
+  }
+  .thumb-row > .cell {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 111px;
+    position: relative;
+    border: 1px solid var(--img-border);
+    overflow: hidden;
+  }
+  .thumb-row > .cell:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+  .thumb-row > .cell:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+  .thumb-row > .cell img {
+    /* Image overflows the 1px cell border on all sides so the image fills
+       the entire cell area (111px full), keeping the inter-image visible gap
+       exactly 2px (matching the .thumb-row `gap: 2px` setting). */
+    position: absolute;
+    inset: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Figma 1321:3795 — bullet description list
+     - flex column, 6px gap between items, 14px gap to next block (e.g. thumb-row)
+     - item: gap 4px, font-size 16px, line-height 1.52, color GRAY900S #191919, letter-spacing 0 */
+  .bullet-list {
+    margin-top: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bullet-item {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    font-size: 16px;
+    line-height: 1.52;
+    color: #191919;
+    letter-spacing: 0;
+  }
+  /* 8×26 container with 3px centered dot — matches Figma Dot component */
+  .bullet-item::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 26px;
+    background-image: radial-gradient(circle at center, #191919 1.5px, transparent 1.6px);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .feedback {
+    text-align: right;
+    font-size: 13px;
+    line-height: 17px;
+    color: var(--gray400);
+    margin-top: 14px;
+    letter-spacing: -0.2px;
+  }
+
+  /* ===== Card News (card_news_01) =====
+     361x361, overflow-clip, dim_blur overlay, content aligned bottom
+     Border radius 16px, light 4% border */
+  .card-news {
+    width: 361px;
+    height: 361px;
+    margin: 0 auto 12px;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    padding: 14px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    color: #ffffff;
+  }
+  /* 20px gap between any card-news placed last (right before tab-bar) and the tabs */
+  main > .card-news:last-child { margin-bottom: 20px; }
+  .card-news > .cn-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .card-news > .cn-bg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* card_news_01 (1321:3775) has image offset: top-[-9.69%], h-[143.2%] */
+  .card-news.variant1 > .cn-bg img {
+    height: 143.2%;
+    top: -9.69%;
+    object-position: center;
+  }
+  .card-news > .cn-dim {
+    /* dim_blur — 1321:3776
+       size 361×361, top/left -1px
+       backdrop-blur(16px), bg-gradient-to-b from transparent at 0% to rgba(0,0,0,0.16) at 50%, holds to 100%
+       Blur visibility confined to the bottom ~25-45% area via mask,
+       matching Figma where the blur appears only under the title/description text. */
+    position: absolute;
+    inset: -1px;
+    z-index: 1;
+    pointer-events: none;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.16) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 42%, rgba(0,0,0,1) 55%, rgba(0,0,0,1) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 42%, rgba(0,0,0,1) 55%, rgba(0,0,0,1) 100%);
+  }
+  .card-news > .cn-content {
+    position: relative;
+    z-index: 2;
+    flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 14px;
+  }
+  .cn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    width: 100%;
+  }
+  .cn-title {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.4;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    margin: 0;
+    width: 100%;
+  }
+  .cn-desc {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.52;
+    color: #ffffff;
+    letter-spacing: -0.2px;
+    margin: 0;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cn-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 34px;
+  }
+  .cn-meta .info-tag .bar { background: rgba(255,255,255,1); width: 1.5px; height: 13px; }
+  .cn-meta .info-tag .txt { color: #ffffff; }
+  .cn-meta .share-btn {
+    border-color: var(--dim-border);
+    background: transparent;
+  }
+  .cn-meta .share-btn svg { color: #ffffff; }
+
+  /* ===== Place list row ===== */
+  .place-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  /* 13px spacing between consecutive place-row items */
+  .place-row + .place-row { margin-top: 13px; }
+  .place-row .place-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 10px;
+    border: 1px solid var(--img-border);
+    background: #eee;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .place-row .place-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .place-row .place-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .place-row .place-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray900);
+    letter-spacing: -0.3px;
+    margin: 0;
+    line-height: 20px;
+  }
+  .place-row .place-addr {
+    font-size: 14px;
+    color: var(--gray600);
+    margin: 0;
+    letter-spacing: -0.28px;
+  }
+  .place-row .place-rating {
+    font-size: 14px;
+    color: var(--gray600);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .place-row .place-rating .star {
+    color: var(--red500);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .place-row .place-rating .star svg { width: 12px; height: 12px; }
+  .place-row .chevron { color: var(--gray300); flex-shrink: 0; }
+  .more-btn {
+    width: 100%;
+    height: 39px;
+    border-radius: 10px;
+    background: var(--gray100);
+    border: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray700);
+    /* 16px gap between last place-row and more-btn */
+    margin-top: 16px;
+    cursor: pointer;
+    letter-spacing: -0.2px;
+  }
+  /* more-btn 하단과 card 섹션 사이 간격 16px (card padding-bottom override) */
+  .card:has(> .more-btn:last-child) { padding-bottom: 16px; }
+
+  /* ===== Finance card ===== */
+  .fin-index { display: flex; flex-direction: column; gap: 4px; }
+  .fin-index .lbl {
+    font-size: 13px;
+    color: var(--gray700);
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+  .fin-index .price { display: flex; align-items: center; gap: 8px; }
+  .fin-index .price .val {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray900);
+    letter-spacing: -0.4px;
+  }
+  .fin-index .price .chg {
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .fin-index .price .chg.down { color: var(--point-blue); }
+  .fin-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 12px 0 14px;
+  }
+  .fin-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+  .fin-row .left .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray900);
+    letter-spacing: -0.2px;
+  }
+  .fin-row .left .code {
+    font-size: 12px;
+    color: var(--gray500);
+    margin-top: 3px;
+  }
+  .fin-row .right { text-align: right; }
+  .fin-row .right .p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray900);
+  }
+  .fin-row .right .c {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .fin-row .right .c.up   { color: var(--point-red); }
+  .fin-row .right .c.down { color: var(--point-blue); }
+  .fin-row .right .c.flat { color: var(--gray500); }
+  .fin-row .right .c svg,
+  .fin-index .price .chg svg {
+    display: inline-block;
+    vertical-align: -1px;
+    margin-right: 1px;
+  }
+  .fin-footer {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--gray400);
+  }
+  .fin-footer a { color: var(--gray400); text-decoration: underline; }
+
+  /* ===== Bottom Tab Bar — Figma 1321:4018 =====
+     Structure: 5 Tab (49px, #fff) + Home Indicator area (34px)
+     Top edge of .tabs uses a subtle 1px divider line (GRAY100A) instead of shadow. */
+  .tab-bar {
+    background: #ffffff;
+    position: relative;
+    z-index: 10;
+  }
+  .tab-bar .tabs {
+    height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    overflow: hidden;
+    /* 1px top divider (Figma tab_shadow replaced with a hairline, GRAY100A) */
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .tab-bar .tab {
+    width: 64px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .tab-bar .tab.openchat { width: 65px; }
+  .tab-bar .tab img { width: 28px; height: 28px; display: block; }
+  .tab-bar .tab .dot-badge {
+    /* Tab 5 Badge — RED500S #f4551e, 4×4, top 2px from Ico&Badge top */
+    position: absolute;
+    top: 12px;
+    left: calc(50% + 12px);
+    width: 4px;
+    height: 4px;
+    background: #f4551e;
+    border-radius: 50%;
+  }
+  .home-indicator-area {
+    /* Same background as .tabs (inherits #fff from .tab-bar) */
+    background: #ffffff;
+    height: 34px;
+    position: relative;
+  }
+  .home-indicator-area .home-indicator {
+    position: absolute;
+    left: calc(50% + 0.5px);
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #000;
+    border-radius: 100px;
+  }
+</style>
+</head>
+<body>
+  <div class="device">
+    <div class="bg-gradient" aria-hidden="true"></div>
+
+    <!-- TOP -->
+    <header class="top">
+      <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="icons">
+          <!-- 상태바 아이콘 번들 (피그마 1321:3709 > Signal, Wifi, Battery) -->
+          <img src="icons/statusbar_signal_wifi_battery@3x.png" width="78" height="13" alt="" />
+        </div>
+      </div>
+
+      <!-- Main tab (피그마 1321:3710) -->
+      <div class="main-tab">
+        <!-- Title Type (피그마 1321:3713) -->
+        <div class="logo-wrap"><div class="logo">더보기</div></div>
+        <!-- Trailing controls (피그마 1321:3714) -->
+        <div class="actions">
+          <!-- NavigationSearch (피그마 1321:3714 > Trailing Button1) -->
+          <button class="icon-btn" aria-label="검색"><img src="icons/nav_search@3x.png" width="24" height="24" alt="" /></button>
+          <!-- NavigationCodescan (피그마 1321:3714 > Trailing Button3) -->
+          <button class="icon-btn" aria-label="코드스캔"><img src="icons/nav_codescan@3x.png" width="24" height="24" alt="" /></button>
+          <!-- Setting (피그마 1321:3714 > Trailing Button4) -->
+          <button class="icon-btn" aria-label="설정"><img src="icons/nav_settings@3x.png" width="24" height="24" alt="" /></button>
+        </div>
+      </div>
+
+      <!-- Top Chip - XLarge (피그마 1321:3715) -->
+      <div class="chip-bar">
+        <div class="chip"><span class="chip-txt">홈</span></div>
+        <div class="chip"><span class="chip-txt">지갑</span></div>
+        <div class="chip"><span class="chip-txt">게임</span></div>
+        <div class="chip active"><span class="chip-txt">발견</span></div>
+      </div>
+    </header>
+
+    <main class="feed">
+
+      <!-- 1) card_news_01 — 프로젝트 헤일메리 -->
+      <section class="card-news variant1">
+        <div class="cn-bg"><img src="images/card_news_01_haimerary.png" alt=""></div>
+        <div class="cn-dim"></div>
+        <div class="cn-content">
+          <div class="cn-text">
+            <h2 class="cn-title">프로젝트 헤일메리</h2>
+            <p class="cn-desc">앤디 위어의 SF 소설 프로젝트 헤일메리는 정체불명 현상으로 죽어가는 태양과 지구를 구하기 위해 우주선에서 홀로 깨어난 과학자 라일랜드 그레이스의 사투를 그립니다. 과학적 설정, 유머, 서스펜스를 강점으로 한 작품이며, 2026년에는 라이언 고슬링 주연의 영화판도 개봉해 다시 주목받고 있습니다.</p>
+          </div>
+          <div class="cn-meta">
+            <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+            <button class="share-btn" aria-label="공유"><img src="icons/share_white@3x.png" width="18" height="18" alt="" /></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2) 노티드 우베 디저트 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">노티드 우베 디저트</h2>
+        <p class="card-desc">노티드 우베 디저트는 보라색 크림과 달콤한 코코넛 맛이 어우러진 이색 디저트입니다. 부드러운 우베 크림이 가득 찬 도넛과 케이크는, 한 번 맛보면 잊을 수 없는 달콤한 경험을 선사합니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/noted1.png" alt=""></div>
+          <div class="cell"><img src="images/noted2.png" alt=""></div>
+          <div class="cell"><img src="images/noted3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 3) 사냥개들 시즌2 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">넷플릭스 ‘사냥개들’ 시즌2</h2>
+        <p class="card-desc">넷플릭스 ‘사냥개들’ 시즌2가 드디어 공개되었습니다! 김민준, 이해영 주연의 액션 느와르 드라마, 숨 막히는 전개와 화려한 액션으로 시청자들을 사로잡고 있습니다. 지금 바로 TOP 10 순위를 확인하세요!</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/dogs1.png" alt=""></div>
+          <div class="cell"><img src="images/dogs2.png" alt=""></div>
+          <div class="cell"><img src="images/dogs3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 4) 코로나19 변이 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">2026년 코로나19 변이 동향</h2>
+        <p class="card-desc">WHO에 따르면 2026년 3월 기준 전 세계적으로 JN.1이 관심 변이로, XFG·NB.1.8.1·KP.3.1.1·BA.3.2 등이 관찰 대상 변이로 추적되고 있습니다. 일부 지역에서 신규 변이 확산세가 포착됐지만, 현재까지는 중증도 급증 근거는 제한적이며 보건당국은 전파력과 면역회피 가능성을 계속 모니터링 중입니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/covid1.png" alt=""></div>
+          <div class="cell"><img src="images/covid2.png" alt=""></div>
+          <div class="cell"><img src="images/covid3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 5) 호르무즈 해협 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">이란, 호르무즈 해협 제한적 개방안 제시</h2>
+        <p class="card-desc">이란이 사실상 봉쇄 상태인 호르무즈 해협과 관련해 오만 측 항로를 이용하는 선박에 대해서는 공격을 자제하겠다는 제한적 개방안을 미국 측에 제시한 것으로 전해졌습니다. 이번 제안은 미국·이란 휴전 이후 긴장 완화와 해상 물류 정상화를 겨냥한 신호로 해석되지만, 미국의 수용 여부는 아직 확인되지 않았습니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/hormuz1.png" alt=""></div>
+          <div class="cell"><img src="images/hormuz2.png" alt=""></div>
+          <div class="cell"><img src="images/hormuz3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 6) card_news_01 — 공동주택 공시가격 -->
+      <section class="card-news">
+        <div class="cn-bg"><img src="images/card_news_02_housing.png" alt=""></div>
+        <div class="cn-dim"></div>
+        <div class="cn-content">
+          <div class="cn-text">
+            <h2 class="cn-title">공동주택 공시가격 상승, 보유세 부담 커진다</h2>
+            <p class="cn-desc">2026년 전국 공동주택 공시가격은 평균 9.16% 상승했습니다. 서울은 18.67% 올라 전국 평균의 두 배에 달합니다. 강남 3구는 24.7%, 성동구는 29% 넘게 올랐습니다. 이로 인해 세금 부담이 크게 늘 전망입니다.</p>
+          </div>
+          <div class="cn-meta">
+            <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에 공유한 링크</span></div>
+            <button class="share-btn" aria-label="공유"><img src="icons/share_white@3x.png" width="18" height="18" alt="" /></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7) 카페 온도 성수 (bullet-list + thumbnails) -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 장소</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">카페 온도 성수 <span class="tag-reserve"><img src="icons/tag_reserve_icon@3x.png" width="12" height="12" alt="" style="flex:none;" />예약</span></h2>
+        <div class="card-meta">
+          <span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" /> 4.7</span><span>(234)</span>
+          <span class="dot-sep"></span>
+          <span>서울 성동구 성수이로</span>
+        </div>
+        <div class="bullet-list">
+          <div class="bullet-item">자연광이 가득한 2층 통유리 공간 — 성수동 대표 감성 카페로, 시그니처 크림라떼와 수제 디저트가 인기입니다.</div>
+          <div class="bullet-item">인테리어가 특별 — 빈티지 가구와 식물이 어우러진 공간 구성으로, 사진 명소로도 유명해요. 2층 루프탑 좌석이 특히 인기입니다.</div>
+          <div class="bullet-item">주변 볼거리 풍부 — 서울숲, 대림창고 등과 가까워 성수동 코스의 시작점으로 추천하는 곳이에요.</div>
+        </div>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/cafe1.png" alt=""></div>
+          <div class="cell"><img src="images/cafe2.png" alt=""></div>
+          <div class="cell"><img src="images/cafe3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 8) 드론 늑구 수색 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">드론 늑구 수색</h2>
+        <p class="card-desc">대전 오월드에서 탈출한 늑대 ‘늑구’를 찾기 위해 당국이 열화상 카메라가 달린 드론을 투입해 야산 일대를 집중 수색하고 있습니다. 다만 비와 넓은 산악 지형 탓에 추적에 어려움을 겪고 있어, 당국은 권역별 수색과 함께 포획틀 설치 등 대응을 병행하고 있습니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/wolf1.png" alt=""></div>
+          <div class="cell"><img src="images/wolf2.png" alt=""></div>
+          <div class="cell"><img src="images/wolf3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 9) 말빵 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">밤티 말빵, SNS 인기 급상승</h2>
+        <p class="card-desc">중국 SNS에서 시작된 ‘말빵’이 국내 카페들로 번지며 ‘밤티 말빵’이라는 이름으로도 화제를 모으고 있어요. 멍한 표정의 말 얼굴 모양 크림빵으로, 피곤한 직장인을 닮은 비주얼이 밈처럼 소비되며 인기를 끄는 중입니다. 아직 대형 뉴스 이슈라기보다는 SNS·디저트 트렌드에 가까운 흐름이에요.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/mbread1.png" alt=""></div>
+          <div class="cell"><img src="images/mbread2.png" alt=""></div>
+          <div class="cell"><img src="images/mbread3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 10) 성수동 맛집 (place list) -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 장소</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">성수동 맛집 <span class="tag-reserve"><img src="icons/tag_reserve_icon@3x.png" width="12" height="12" alt="" style="flex:none;" />예약</span></h2>
+
+        <div class="place-row" style="margin-top:12px;">
+          <div class="place-img"><img src="images/ploc1_1.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">도원 성수본점</p>
+            <p class="place-addr">서울 성동구 성수동2가</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.5</span><span>(312)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <div class="place-row">
+          <div class="place-img"><img src="images/ploc1_2.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">떡볶이연구소 성수점</p>
+            <p class="place-addr">서울 성동구 서울숲2길</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.3</span><span>(187)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <div class="place-row">
+          <div class="place-img"><img src="images/ploc1_3.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">르블랑 by 마시안</p>
+            <p class="place-addr">서울 성동구 연무장길</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.6</span><span>(95)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <button class="more-btn">더보기</button>
+      </section>
+
+      <!-- 11) card_news_01 — 갤럭시 폴드 7 -->
+      <section class="card-news">
+        <div class="cn-bg"><img src="images/card_news_03_samsung.png" alt=""></div>
+        <div class="cn-dim"></div>
+        <div class="cn-content">
+          <div class="cn-text">
+            <h2 class="cn-title">삼성전자, 갤럭시 Z 폴드 7 발표</h2>
+            <p class="cn-desc">삼성전자가 차세대 폴더블폰 갤럭시 폴드7을 공식 발표했습니다. 두께 9.9mm의 초슬림 설계와 AI 기반 멀티태스킹 기능이 핵심 변화로 꼽힙니다.</p>
+          </div>
+          <div class="cn-meta">
+            <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에 공유한 링크</span></div>
+            <button class="share-btn" aria-label="공유"><img src="icons/share_white@3x.png" width="18" height="18" alt="" /></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12) 을지로 골목 (bullet + thumbs) -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 장소</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">을지로 노가리 골목 <span class="tag-reserve"><img src="icons/tag_reserve_icon@3x.png" width="12" height="12" alt="" style="flex:none;" />예약</span></h2>
+        <div class="card-meta">
+          <span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" /> 4.5</span><span>(412)</span>
+          <span class="dot-sep"></span>
+          <span>서울 중구 을지로 일대</span>
+        </div>
+        <div class="bullet-list">
+          <div class="bullet-item">서울 을지로의 대표 핫플레이스 — 레트로 감성과 힙한 바 거리가 공존하는 골목으로, 퇴근 후 즐기기 좋은 곳입니다.</div>
+          <div class="bullet-item">숨은 맛집 많음 — 노가리 호프집부터 자연와인 바, 수제버거 가게까지 골목 곳곳에 개성 있는 맛집이 숨어있어요.</div>
+          <div class="bullet-item">야경 명소 — 조명이 아름다운 을지로 골목은 저녁 시간대에 특히 분위기가 좋아 데이트 코스로 인기입니다.</div>
+        </div>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/euljiro1.png" alt=""></div>
+          <div class="cell"><img src="images/euljiro2.png" alt=""></div>
+          <div class="cell"><img src="images/euljiro3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 13) Finance — 코스피 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <div class="fin-index">
+          <div class="lbl">코스피</div>
+          <div class="price">
+            <span class="val">5,507.01</span>
+            <span class="chg down"><img src="icons/trend_index_down@3x.png" width="10" height="10" alt="" /> 15.26(0.28%)</span>
+          </div>
+        </div>
+
+        <div class="fin-divider"></div>
+
+        <div class="fin-row">
+          <div class="left"><div class="name">SK하이닉스</div><div class="code">000660</div></div>
+          <div class="right"><div class="p">245,500원</div><div class="c up"><img src="icons/trend_stock_up@3x.png" width="10" height="10" alt="" /> 4,000원(29.9%)</div></div>
+        </div>
+        <div class="fin-row">
+          <div class="left"><div class="name">삼성전자</div><div class="code">005930</div></div>
+          <div class="right"><div class="p">68,800원</div><div class="c down"><img src="icons/trend_stock_down@3x.png" width="10" height="10" alt="" /> 2,600원(10.2%)</div></div>
+        </div>
+        <div class="fin-row">
+          <div class="left"><div class="name">카카오</div><div class="code">035720</div></div>
+          <div class="right"><div class="p">52,300원</div><div class="c flat"><svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><rect x="1.5" y="4.3" width="7" height="1.4" rx="0.5"/></svg> 0.00(0.0%)</div></div>
+        </div>
+
+        <div class="fin-footer">
+          <span>2026.04.16 9:30 기준</span>
+          <a href="#">면책조항</a>
+        </div>
+      </section>
+
+      <!-- 14) BTS Hooligan -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">BTS ‘Hooligan’ MV 공개</h2>
+        <p class="card-desc">BTS의 ‘Hooligan’은 정규 앨범 《ARIRANG》 수록곡으로, 타이틀곡 ‘SWIM’과는 다른 반항적이고 강한 에너지의 분위기로 주목받고 있습니다. RM·제이홉·슈가가 공동 작업에 참여했으며, 4월 8일 0시(KST) 뮤직비디오가 공개되면서 팬들 사이에서 대표 인기 B사이드 곡으로 떠올랐습니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/bts1.png" alt=""></div>
+          <div class="cell"><img src="images/bts2.png" alt=""></div>
+          <div class="cell"><img src="images/bts3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 15) 2026 한일가왕전 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">2026 한일가왕전 첫 방송</h2>
+        <p class="card-desc">MBN ‘2026 한일가왕전’이 4월 14일 첫 방송을 시작하며 한일 대표 TOP7의 국가대항전 구도를 본격화했습니다. 첫 회는 한국과 일본 팀이 맞붙는 탐색전 ‘100초 전’으로 꾸며졌고, 차지연이 652점으로 1위를 기록하며 강한 인상을 남겼습니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/gawang1.png" alt=""></div>
+          <div class="cell"><img src="images/gawang2.png" alt=""></div>
+          <div class="cell"><img src="images/gawang3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 16) 목동 아파트 화재 -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 주제</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">목동 5층 아파트 화재</h2>
+        <p class="card-desc">서울 양천구 목동의 5층짜리 아파트 2층에서 4월 16일 오전 불이 나 주민 2명이 연기를 흡입해 병원으로 옮겨졌습니다. 소방당국은 오전 10시 10분 신고를 받고 인력 88명 안팎과 장비 30여 대를 투입해 약 40분 만인 10시 52분께 불을 완전히 껐습니다.</p>
+        <div class="thumb-row">
+          <div class="cell"><img src="images/mokdong1.png" alt=""></div>
+          <div class="cell"><img src="images/mokdong2.png" alt=""></div>
+          <div class="cell"><img src="images/mokdong3.png" alt=""></div>
+        </div>
+        <div class="feedback">의견 보내기</div>
+      </section>
+
+      <!-- 17) 한남 place list -->
+      <section class="card">
+        <div class="info-share">
+          <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에서 이야기한 장소</span></div>
+          <button class="share-btn" aria-label="공유"><img src="icons/share@3x.png" width="18" height="18" alt="" /></button>
+        </div>
+        <h2 class="card-title">한남동 브런치 맛집 <span class="tag-reserve"><img src="icons/tag_reserve_icon@3x.png" width="12" height="12" alt="" style="flex:none;" />예약</span></h2>
+
+        <div class="place-row" style="margin-top:12px;">
+          <div class="place-img"><img src="images/ploc2_1.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">빌즈 한남</p>
+            <p class="place-addr">서울 용산구 한남동</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.8</span><span>(312)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <div class="place-row">
+          <div class="place-img"><img src="images/ploc2_2.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">에그슬럿 한남</p>
+            <p class="place-addr">서울 용산구 이태원로</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.4</span><span>(187)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <div class="place-row">
+          <div class="place-img"><img src="images/ploc2_3.png" alt=""></div>
+          <div class="place-info">
+            <p class="place-name">오베르 한남</p>
+            <p class="place-addr">서울 용산구 독서당로</p>
+            <div class="place-rating"><span class="star"><img src="icons/star@3x.png" width="12" height="12" alt="" />4.7</span><span>(95)</span></div>
+          </div>
+          <img class="chevron" src="icons/chevron_right@3x.png" width="24" height="24" alt="" />
+        </div>
+
+        <button class="more-btn">더보기</button>
+      </section>
+
+      <!-- 18) card_news_01 — 애플 WWDC26 -->
+      <section class="card-news">
+        <div class="cn-bg"><img src="images/card_news_04_apple.png" alt=""></div>
+        <div class="cn-dim"></div>
+        <div class="cn-content">
+          <div class="cn-text">
+            <h2 class="cn-title">애플, WWDC26에서 AI 에이전트 발표</h2>
+            <p class="cn-desc">애플이 WWDC 2026에서 시리 기반 AI 에이전트를 공개했습니다. 앱 간 자동 연동과 개인 맞춤형 추천이 핵심으로, 하반기 iOS 20에 탑재 예정입니다.</p>
+          </div>
+          <div class="cn-meta">
+            <div class="info-tag"><span class="bar"></span><span class="txt">채팅방에 공유한 링크</span></div>
+            <button class="share-btn" aria-label="공유"><img src="icons/share_white@3x.png" width="18" height="18" alt="" /></button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Tab Bar — Figma 1321:4018 -->
+    <footer class="tab-bar">
+      <!-- 5 Tab row (49px, white) -->
+      <div class="tabs">
+        <!-- 친구 (Friend) -->
+        <div class="tab friend"><img src="icons/tab_friends@3x.png" width="28" height="28" alt="친구" /></div>
+        <!-- 채팅 (Chat) -->
+        <div class="tab chat"><img src="icons/tab_chat@3x.png" width="28" height="28" alt="채팅" /></div>
+        <!-- 오픈채팅 (OpenChat) - 65px wide -->
+        <div class="tab openchat"><img src="icons/tab_openchat@3x.png" width="28" height="28" alt="오픈채팅" /></div>
+        <!-- 쇼핑 (Shopping) -->
+        <div class="tab shop"><img src="icons/tab_shop@3x.png" width="28" height="28" alt="쇼핑" /></div>
+        <!-- 더보기 (More) - selected, with red dot badge -->
+        <div class="tab more selected"><img src="icons/tab_more@3x.png" width="28" height="28" alt="더보기" /><span class="dot-badge"></span></div>
+      </div>
+      <!-- Home Indicator area (34px, #f9f9fa) -->
+      <div class="home-indicator-area">
+        <div class="home-indicator"></div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
