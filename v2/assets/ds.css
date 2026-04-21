@@ -296,6 +296,24 @@ p { margin: 0; }
   padding: 16px;
 }
 
+/* Exact-width preview frames — render component at its real pixel width, no phone chrome */
+.ds-device-frame.w-393,
+.ds-device-frame.w-361 {
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--ds-border);
+  border-radius: 0;
+  overflow: visible;
+}
+.ds-device-frame.w-393 { width: 393px; max-width: 100%; }
+.ds-device-frame.w-361 { width: 361px; max-width: 100%; }
+.ds-device-frame.w-393 > .ds-device-inner,
+.ds-device-frame.w-361 > .ds-device-inner {
+  border-radius: 0;
+  padding: 0;
+  overflow: visible;
+}
+
 /* ==========================================================================
    Code blocks
    ========================================================================== */

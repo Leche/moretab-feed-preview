@@ -21,8 +21,9 @@ cd moretab-design-system-web-publishing && \
 git pull --rebase && \
 rm -rf v2 && mkdir v2 && \
 cp -R "/Users/leche_M3/Documents/Claude/Projects/더보기탭 디자인 시스템 구현/"* v2/ && \
+rm -f v2/components/card.html v2/components/card-news.html && \
 git add v2 && \
-git commit -m "Add v2: refined design system" && \
+git commit -m "Update v2: widths (393/361) + remove Card/CardNews" && \
 git push
 ```
 

@@ -12,8 +12,8 @@ assets/
   ds.css                    공통 스타일 (레이아웃 · 사이드바 · 테이블 · 미리보기 프레임)
   ds.js                     네비게이션 활성화 / data-root 경로 보정
 foundation/                 색 · 타이포 · 간격 · 아이콘
-components/                 12개 UI 컴포넌트 (Header, Chip, PayStrip, ServiceShortcut,
-                             HomeAd, GameCard, KakaoNow, WeatherCard, Card, CardNews, TabBar)
+components/                 10개 UI 컴포넌트 (Header, Chip, PayStrip, ServiceShortcut,
+                             HomeAd, GameCard, KakaoNow, WeatherCard, TabBar)
 patterns/                   앱 셸 / 세션 구조 등 조합 패턴
 ```
 

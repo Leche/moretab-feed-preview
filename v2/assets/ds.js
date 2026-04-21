@@ -42,8 +42,6 @@
         { id: 'components/game-card', label: 'GameCard', href: 'components/game-card.html' },
         { id: 'components/kakaonow', label: 'KakaoNow', href: 'components/kakaonow.html' },
         { id: 'components/weather-card', label: 'WeatherCard', href: 'components/weather-card.html' },
-        { id: 'components/card', label: 'Card (범용)', href: 'components/card.html' },
-        { id: 'components/card-news', label: 'CardNews', href: 'components/card-news.html' },
         { id: 'components/tab-bar', label: 'TabBar (하단)', href: 'components/tab-bar.html' },
       ],
     },
