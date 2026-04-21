@@ -93,7 +93,10 @@ p { margin: 0; }
   font-size: 14px;
   font-weight: 500;
   color: var(--ds-text-sub);
-  padding: 6px 2px;
+  display: flex;
+  align-items: center;
+  height: var(--ds-header-h);
+  padding: 0 2px;
   position: relative;
   transition: color .15s;
 }
@@ -106,7 +109,7 @@ p { margin: 0; }
   content: "";
   position: absolute;
   left: 0; right: 0;
-  bottom: calc((100% - var(--ds-header-h)) / 2);
+  bottom: -1px;
   height: 2px;
   background: var(--ds-text);
 }

@@ -104,17 +104,9 @@
     )
     .join('');
 
-  // ----- Footer ------------------------------------------------------------
-  const footer = document.createElement('footer');
-  footer.className = 'ds-footer';
-  footer.innerHTML = `
-    © ${new Date().getFullYear()} 더보기탭 디자인 시스템 · 카카오톡 더보기탭 담당 프로덕트 디자이너
-  `;
-
   // ----- Mount -------------------------------------------------------------
   body.insertBefore(sidebar, body.firstChild);
   body.insertBefore(header, body.firstChild);
-  body.appendChild(footer);
 
   // ----- Example tabs (for component pages) --------------------------------
   document.querySelectorAll('.ds-example').forEach((ex) => {
