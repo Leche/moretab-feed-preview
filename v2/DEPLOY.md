@@ -22,8 +22,9 @@ git pull --rebase && \
 rm -rf v2 && mkdir v2 && \
 cp -R "/Users/leche_M3/Documents/Claude/Projects/더보기탭 디자인 시스템 구현/"* v2/ && \
 rm -f v2/components/card.html v2/components/card-news.html && \
+find v2 -name "*.html" -exec sed -i '' 's|assets/ds.css"|assets/ds.css?v=4"|g; s|assets/ds.js"|assets/ds.js?v=4"|g; s|../assets/ds.css"|../assets/ds.css?v=4"|g; s|../assets/ds.js"|../assets/ds.js?v=4"|g' {} + && \
 git add v2 && \
-git commit -m "Update v2: widths (393/361) + remove Card/CardNews" && \
+git commit -m "v2: remove frame border & inner bg so rounded components sit flush" && \
 git push
 ```
 

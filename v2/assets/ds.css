@@ -255,6 +255,8 @@ p { margin: 0; }
 }
 .ds-example-preview.is-mobile {
   padding: 24px;
+  background: transparent;
+  min-height: 0;
 }
 .ds-example-preview.is-dark {
   background: #191919;
@@ -305,7 +307,7 @@ p { margin: 0; }
 .ds-device-frame.w-361 {
   padding: 0;
   background: transparent;
-  border: 1px solid var(--ds-border);
+  border: 0;
   border-radius: 0;
   overflow: visible;
 }
@@ -313,6 +315,7 @@ p { margin: 0; }
 .ds-device-frame.w-361 { width: 361px; max-width: 100%; }
 .ds-device-frame.w-393 > .ds-device-inner,
 .ds-device-frame.w-361 > .ds-device-inner {
+  background: transparent;
   border-radius: 0;
   padding: 0;
   overflow: visible;
