@@ -22,9 +22,9 @@ git pull --rebase && \
 rm -rf v2 && mkdir v2 && \
 cp -R "/Users/leche_M3/Documents/Claude/Projects/더보기탭 디자인 시스템 구현/"* v2/ && \
 rm -f v2/components/card.html v2/components/card-news.html && \
-find v2 -name "*.html" -exec sed -i '' 's|assets/ds.css"|assets/ds.css?v=19"|g; s|assets/ds.js"|assets/ds.js?v=19"|g; s|../assets/ds.css"|../assets/ds.css?v=19"|g; s|../assets/ds.js"|../assets/ds.js?v=19"|g' {} + && \
+find v2 -name "*.html" -exec sed -i '' 's|assets/ds.css"|assets/ds.css?v=20"|g; s|assets/ds.js"|assets/ds.js?v=20"|g; s|../assets/ds.css"|../assets/ds.css?v=20"|g; s|../assets/ds.js"|../assets/ds.js?v=20"|g' {} + && \
 git add v2 && \
-git commit -m "v2: inline code color #2f7ff5, pre blocks wrap instead of horizontal scroll" && \
+git commit -m "v2: ds-category-card spec sync with Figma (padding 28, border rgba(0,0,0,0.08), line-heights, cat-items #b2b2b2)" && \
 git push
 ```
 

@@ -514,25 +514,26 @@ pre code.hljs { background: transparent; padding: 0; white-space: inherit; overf
 }
 .ds-category-card {
   display: block;
-  border: 1px solid var(--ds-border);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: var(--ds-radius-lg);
-  padding: 32px 24px 28px;
+  padding: 28px;
   background: #fff;
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
 }
 .ds-category-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 16px rgba(0,0,0,0.06);
-  border-color: var(--ds-border-strong);
+  border-color: rgba(0, 0, 0, 0.14);
 }
-.ds-category-card h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
-.ds-category-card p { font-size: 14px; color: var(--ds-text-sub); line-height: 1.55; }
+.ds-category-card h3 { font-size: 19px; font-weight: 700; line-height: 25px; margin-bottom: 6px; }
+.ds-category-card p { font-size: 14px; color: var(--ds-text-sub); line-height: 22px; }
 .ds-category-card .cat-items {
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--ds-border);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 13px;
-  color: var(--ds-text-caption);
+  line-height: 20px;
+  color: #b2b2b2;
 }
 
 /* ==========================================================================
