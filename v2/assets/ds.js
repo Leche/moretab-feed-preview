@@ -8,7 +8,7 @@
 
   // ----- Nav data ----------------------------------------------------------
   const topNav = [
-    { id: 'home', label: '개요', href: 'index.html' },
+    { id: 'home', label: 'Overview', href: 'index.html' },
     { id: 'foundation', label: 'Foundation', href: 'foundation/color.html' },
     { id: 'components', label: 'Components', href: 'components/overview.html' },
     { id: 'patterns', label: 'Patterns', href: 'patterns/app-shell.html' },
@@ -68,14 +68,20 @@
   header.className = 'ds-header';
   header.innerHTML = `
     <a href="${root}index.html" class="ds-header-brand">
-      <span class="ds-brand-mark">더</span>
-      <span>더보기탭 디자인 시스템</span>
+      <span class="ds-brand-mark" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="6" cy="14" r="2.2" fill="#191919"/>
+          <circle cx="14" cy="14" r="2.2" fill="#191919"/>
+          <circle cx="22" cy="14" r="2.2" fill="#191919"/>
+        </svg>
+      </span>
+      <span class="ds-brand-wordmark">Moretab Design System</span>
     </a>
     <nav class="ds-header-nav">
       ${topNav
         .map(
           (n) =>
-            `<a href="${root}${n.href}" class="${matchTop(n.id) ? 'is-active' : ''}">${n.label}</a>`
+            `<a href="${root}${n.href}" class="${matchTop(n.id) ? 'is-active' : ''}"><span class="ds-header-nav-label">${n.label}</span></a>`
         )
         .join('')}
     </nav>
