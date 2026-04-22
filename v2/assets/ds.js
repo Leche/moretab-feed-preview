@@ -74,8 +74,15 @@
     return 'home';
   }
 
+  const sectionTitles = {
+    foundation: 'Foundation',
+    components: 'Components',
+    patterns: 'Patterns',
+  };
+
   const activeSection = currentSection();
   const sideNav = sideNavBySection[activeSection] || null;
+  const sideNavTitle = sectionTitles[activeSection] || '';
 
   // ----- Compute which top nav is active ----------------------------------
   function matchTop(id) {
@@ -115,7 +122,10 @@
   if (sideNav) {
     sidebar = document.createElement('aside');
     sidebar.className = 'ds-sidebar';
-    sidebar.innerHTML = sideNav
+    const titleHtml = sideNavTitle
+      ? `<h2 class="ds-lnb-section-title">${sideNavTitle}</h2>`
+      : '';
+    const groupsHtml = sideNav
       .map(
         (g) => `
         <div class="ds-lnb-group${g.group ? '' : ' is-untitled'}">
@@ -134,6 +144,7 @@
       `
       )
       .join('');
+    sidebar.innerHTML = titleHtml + groupsHtml;
   } else {
     // 사이드바 없는 페이지(Overview)는 main이 전폭으로 퍼지도록 body에 플래그
     body.classList.add('is-no-sidebar');
