@@ -1,0 +1,11 @@
+{
+  "livePreview.portNumber": 3000,
+  "livePreview.openPreviewTarget": "Embedded Preview",
+  "livePreview.serverKeepAliveAfterEmbeddedPreviewClose": 20,
+  "livePreview.defaultPreviewPath": "/index.html",
+  "files.associations": {
+    "*.html": "html"
+  },
+  "editor.formatOnSave": false,
+  "html.format.wrapLineLength": 0
+}

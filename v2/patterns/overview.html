@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Patterns — 더보기탭 디자인 시스템</title>
+  <link rel="stylesheet" href="../assets/ds.css?v=25" />
+  <script defer src="../assets/ds.js?v=25"></script>
+  <style>
+    .ds-page-header { border-bottom: none; margin-bottom: 0; }
+    .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px 16px; }
+    .comp-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      transition: transform .2s ease;
+    }
+    .comp-card:hover { transform: translateY(-3px); }
+    .comp-card:hover .comp-thumb {
+      border-color: rgba(0, 0, 0, 0.14);
+      box-shadow: 0 5px 16px rgba(0,0,0,0.06);
+    }
+    .comp-thumb {
+      height: 200px;
+      background: #f5f6f7;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .comp-body { padding: 0; }
+    .comp-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 25px;
+      color: #191919;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .comp-body p {
+      font-size: 13px;
+      color: #191919;
+      line-height: 22px;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* App Shell mini — 9:16 device frame (#191919 bezel) wrapping screen with 3 grayscale layers */
+    .mini-shell {
+      width: 79px;
+      height: 140px;
+      background: #191919;
+      border-radius: 14px;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+    .mini-shell-screen {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .ms-top {
+      height: 22px;
+      background: rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+    .ms-feed {
+      flex: 1;
+      background: #ffffff;
+    }
+    .ms-tabbar {
+      height: 19px;
+      background: rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+
+    /* Home Feed mini — 3 stacked blocks (dark top / largest middle / clipped bottom), 30% scaled */
+    .mini-feed {
+      position: absolute;
+      left: 50%;
+      top: 40px;
+      transform: translateX(-50%);
+      width: 154px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mf-block {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 1.5px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    .mf-block.is-dark {
+      background: #191919;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body data-page="patterns/overview" data-root="../">
+  <main class="ds-main">
+    <div class="ds-main-inner">
+      <header class="ds-page-header">
+        <h1 class="ds-page-title">Patterns</h1>
+        <p class="ds-page-desc">
+          컴포넌트를 조합해 화면을 만드는 단위의 구성 규칙입니다. 앱 셸은 화면의 뼈대를,
+          홈 피드는 콘텐츠 블록의 쌓임 순서와 간격을 정의합니다.
+        </p>
+      </header>
+
+      <section class="ds-section">
+        <div class="comp-grid">
+
+          <!-- App Shell -->
+          <a class="comp-card" href="app-shell.html">
+            <div class="comp-thumb">
+              <div class="mini-shell">
+                <div class="mini-shell-screen">
+                  <span class="ms-top"></span>
+                  <span class="ms-feed"></span>
+                  <span class="ms-tabbar"></span>
+                </div>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>App Shell</h3>
+              <p>StatusBar · Header · 콘텐츠 영역 · TabBar 레이어 구조</p>
+            </div>
+          </a>
+
+          <!-- Home Feed -->
+          <a class="comp-card" href="home-screen.html">
+            <div class="comp-thumb">
+              <div class="mini-feed">
+                <span class="mf-block is-dark" style="height:28px"></span>
+                <span class="mf-block" style="height:70px"></span>
+                <span class="mf-block" style="height:56px"></span>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>Home Feed</h3>
+              <p>홈 피드 컴포넌트 쌓임 순서 · 12px 간격 규칙</p>
+            </div>
+          </a>
+
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

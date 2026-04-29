@@ -9,9 +9,9 @@
   // ----- Nav data ----------------------------------------------------------
   const topNav = [
     { id: 'home', label: 'Overview', href: 'index.html' },
-    { id: 'foundation', label: 'Foundation', href: 'foundation/color.html' },
+    { id: 'foundation', label: 'Foundation', href: 'foundation/overview.html' },
     { id: 'components', label: 'Components', href: 'components/overview.html' },
-    { id: 'patterns', label: 'Patterns', href: 'patterns/app-shell.html' },
+    { id: 'patterns', label: 'Patterns', href: 'patterns/overview.html' },
   ];
 
   // LNB: top-nav 섹션별로 분리. Overview(home) 섹션은 사이드바 없음.

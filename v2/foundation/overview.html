@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Foundation — 더보기탭 디자인 시스템</title>
+  <link rel="stylesheet" href="../assets/ds.css?v=25" />
+  <script defer src="../assets/ds.js?v=25"></script>
+  <style>
+    .ds-page-header { border-bottom: none; margin-bottom: 0; }
+    .comp-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px 16px; }
+    .comp-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      transition: transform .2s ease;
+    }
+    .comp-card:hover { transform: translateY(-3px); }
+    .comp-card:hover .comp-thumb {
+      border-color: rgba(0, 0, 0, 0.14);
+      box-shadow: 0 5px 16px rgba(0,0,0,0.06);
+    }
+    .comp-thumb {
+      height: 200px;
+      background: #f5f6f7;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 16px;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .comp-body { padding: 0; }
+    .comp-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 25px;
+      color: #191919;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .comp-body p {
+      font-size: 13px;
+      color: #191919;
+      line-height: 22px;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Color mini — two overlapping circles, overlap is cut out (transparent) */
+    .mini-color svg {
+      display: block;
+      width: 120px;
+      height: 72px;
+    }
+
+    /* Typography mini — two "Aa" samples (56 / 32) */
+    .mini-type {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .mini-type-aa {
+      font-family: 'Pretendard', sans-serif;
+      font-weight: 700;
+      color: #191919;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .mini-type-aa.is-lg { font-size: 56px; }
+    .mini-type-aa.is-sm { font-size: 32px; }
+
+    /* Spacing & Radius mini — Figma 1:1 (card extends from left:63 past right edge regardless of thumb width) */
+    .mini-spacing-card {
+      position: absolute;
+      left: 63px;
+      right: -40px;
+      top: -36px;
+      height: 307px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 1.5px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .mini-spacing-card > span {
+      position: absolute;
+      display: block;
+    }
+    .ms-pill-active {
+      left: 20px; top: 61px;
+      width: 49px; height: 32px;
+      background: #191919;
+      border-radius: 32px;
+    }
+    .ms-pill-inactive {
+      left: 75px; top: 61px;
+      width: 56px; height: 32px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 32px;
+    }
+    .ms-block-1 {
+      left: 20px; right: -60px; top: 113px;
+      height: 48px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 12px;
+    }
+    .ms-block-2 {
+      left: 20px; right: -60px; top: 175px;
+      height: 122px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 12px;
+    }
+
+    /* Icon mini — 3 white rounded cards (60×60) with 36px line icons */
+    .mini-icon-row {
+      display: flex;
+      gap: 16px;
+    }
+    .mini-icon-card {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 1.5px rgba(0,0,0,0.05);
+      box-sizing: border-box;
+    }
+    .mini-icon-card img {
+      width: 36px;
+      height: 36px;
+      display: block;
+    }
+  </style>
+</head>
+<body data-page="foundation/overview" data-root="../">
+  <main class="ds-main">
+    <div class="ds-main-inner">
+      <header class="ds-page-header">
+        <h1 class="ds-page-title">Foundation</h1>
+        <p class="ds-page-desc">
+          화면이 공유하는 디자인의 최소 단위입니다. 색상·타이포그래피·여백·아이콘 — 이 네 가지
+          토큰이 더보기탭의 모든 컴포넌트와 패턴을 만드는 기반이 됩니다.
+        </p>
+      </header>
+
+      <section class="ds-section">
+        <div class="comp-grid">
+
+          <!-- Color -->
+          <a class="comp-card" href="color.html">
+            <div class="comp-thumb">
+              <div class="mini-color">
+                <svg viewBox="0 0 120 72" aria-hidden="true">
+                  <defs>
+                    <mask id="color-cut-left">
+                      <rect width="120" height="72" fill="white"/>
+                      <circle cx="84" cy="36" r="36" fill="black"/>
+                    </mask>
+                    <mask id="color-cut-right">
+                      <rect width="120" height="72" fill="white"/>
+                      <circle cx="36" cy="36" r="36" fill="black"/>
+                    </mask>
+                  </defs>
+                  <circle cx="36" cy="36" r="36" fill="#191919" mask="url(#color-cut-left)"/>
+                  <circle cx="84" cy="36" r="36" fill="#ffffff" mask="url(#color-cut-right)"/>
+                </svg>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>Color</h3>
+              <p>그레이스케일 9단계 + 액센트 컬러 토큰</p>
+            </div>
+          </a>
+
+          <!-- Typography -->
+          <a class="comp-card" href="typography.html">
+            <div class="comp-thumb">
+              <div class="mini-type">
+                <span class="mini-type-aa is-lg">Aa</span>
+                <span class="mini-type-aa is-sm">Aa</span>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>Typography</h3>
+              <p>Pretendard · 400 / 600 / 700 / 800</p>
+            </div>
+          </a>
+
+          <!-- Spacing & Radius -->
+          <a class="comp-card" href="spacing.html">
+            <div class="comp-thumb">
+              <div class="mini-spacing-card">
+                <span class="ms-pill-active"></span>
+                <span class="ms-pill-inactive"></span>
+                <span class="ms-block-1"></span>
+                <span class="ms-block-2"></span>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>Spacing &amp; Radius</h3>
+              <p>2·4·8 기반 여백 스케일 + 라운드 토큰</p>
+            </div>
+          </a>
+
+          <!-- Icon -->
+          <a class="comp-card" href="icon.html">
+            <div class="comp-thumb">
+              <div class="mini-icon-row">
+                <span class="mini-icon-card"><img src="thumbs/icon-dots.png" alt="" /></span>
+                <span class="mini-icon-card"><img src="thumbs/icon-heart.png" alt="" /></span>
+                <span class="mini-icon-card"><img src="thumbs/icon-gear.png" alt="" /></span>
+              </div>
+            </div>
+            <div class="comp-body">
+              <h3>Icon</h3>
+              <p>시스템 아이콘 세트 · 24px 그리드</p>
+            </div>
+          </a>
+
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
