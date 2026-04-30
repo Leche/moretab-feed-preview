@@ -71,10 +71,9 @@
   }
 
   .device {
-    /* Fluid container — full device width
-       NOTE: overflow:hidden 제거. .top이 sticky이므로 page(<html>)가
-       nearest scroll ancestor여야 함. overflow:hidden이 걸리면 .device가
-       scroll container가 되어 sticky가 작동하지 않음. */
+    /* Fluid container — full device width.
+       overflow:hidden 미사용: 스크롤 컨테이너는 page(<html>)가 되어야 함
+       (이전 sticky 구현 호환 유지 / 현 구조에서도 페이지 스크롤 일관성 위해 그대로 둠). */
     width: 100%;
     background: #ffffff;
     position: relative;
@@ -109,12 +108,13 @@
   }
 
   /* ===== TOP =====
-     Sticky at top of viewport; hides on scroll down, shows on scroll up.
+     Fixed at top of viewport; hides on scroll down, shows on scroll up.
      Height: main-tab 56 + chip-bar 48 = 104px (+safe-top in PWA standalone for notch)
-     position:sticky로 flow 안에 자리 잡기 때문에 .feed의 padding-top 오프셋 불필요.
+     position:fixed로 뷰포트에 고정 → 최상단 오버스크롤(rubber-band) 시 헤더가 같이 튕기지 않음.
+     flow 점유가 없으므로 .feed 에 padding-top: 104px 로 보정.
      Reveal(→visible)는 빠르게 160ms, hide(→hidden)는 240ms로 약간 느리게(자연스러운 사라짐) */
   .top {
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -249,13 +249,13 @@
   }
 
   /* ===== FEED =====
-     .top은 position:sticky로 flow에 자리 잡으므로 padding-top 오프셋 불필요.
+     .top이 position:fixed라 flow를 점유하지 않으므로 헤더 높이(104px)만큼 padding-top 확보.
      하단 .tab-bar(fixed 49px)만큼만 padding-bottom으로 확보.
      Standalone(PWA): media query에서 safe-area 추가. */
   .feed {
     position: relative;
     z-index: 5;
-    padding: 0 0 20px; /* 마지막 요소 아래 시각적 여백 20px만 */
+    padding: 104px 0 20px; /* top: 헤더 높이 보상 / bottom: 마지막 요소 아래 시각적 여백 20px */
   }
 
   /* ===== Share row (info+share) — Figma 1321:3799 =====
@@ -789,6 +789,7 @@
      이중 분기: @media (display-mode: standalone) + html[data-standalone="true"] */
   @media all and (display-mode: standalone) {
     .top { padding-top: env(safe-area-inset-top, 0px); }
+    .feed { padding-top: calc(104px + env(safe-area-inset-top, 0px)); }
     .tab-bar { padding-bottom: env(safe-area-inset-bottom, 0px); }
     body {
       padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px));
@@ -799,6 +800,7 @@
     }
   }
   html[data-standalone="true"] .top { padding-top: env(safe-area-inset-top, 0px); }
+  html[data-standalone="true"] .feed { padding-top: calc(104px + env(safe-area-inset-top, 0px)); }
   html[data-standalone="true"] .tab-bar { padding-bottom: env(safe-area-inset-bottom, 0px); }
   html[data-standalone="true"] body {
     padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px));
