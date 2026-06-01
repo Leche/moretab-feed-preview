@@ -1,6 +1,8 @@
 # CLAUDE.md
 
 > 이 레포 전용 컨텍스트. 모든 Claude Code 세션 시작 시 자동 로드됨.
+>
+> **세션 시작 시 가장 먼저 [`memory/current_state.md`](./memory/current_state.md)부터 확인** — 살아있는 진행 상황·결정·다음 액션 누적되어 있음.
 
 ---
 
